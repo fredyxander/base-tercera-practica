@@ -1,6 +1,8 @@
 import path from "path";
 import {fileURLToPath} from 'url';
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import {options} from "./config/options.js";
 
 export const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -10,4 +12,9 @@ export const createHash = (password)=>{
 
 export const isValidPassword=(user, password)=>{
     return bcrypt.compareSync(password, user.password);
+};
+
+export const generateEmailToken = (email, expireTime)=>{
+    const token = jwt.sign({email}, options.server.tokenKey, {expiresIn:expireTime});
+    return token;
 };

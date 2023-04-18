@@ -10,6 +10,9 @@ const GITHUB_APP_ID=process.env.GITHUB_APP_ID;
 const GITHUB_CLIENT_ID=process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET=process.env.GITHUB_CLIENT_SECRET;
 const PERSISTENCE = process.env.PERSISTENCE;
+const TOKEN_SECRET = process.env.TOKEN_SECRET;
+const ADMIN_GMAIL= process.env.ADMIN_GMAIL;
+const ADMIN_GMAIL_PASS=process.env.ADMIN_GMAIL_PASS;
 
 export const options = {
     fileSystem:{
@@ -28,6 +31,11 @@ export const options = {
     server:{
         port:PORT,
         secretSession:SECRET_SESSION,
-        persistence: PERSISTENCE
+        persistence: PERSISTENCE,
+        tokenKey:TOKEN_SECRET
+    },
+    gmail:{
+        adminGmail:ADMIN_GMAIL,
+        adminGmailPass:ADMIN_GMAIL_PASS
     }
 };

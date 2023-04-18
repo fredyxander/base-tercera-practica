@@ -101,4 +101,8 @@ router.get("/login",(req,res)=>{
     res.render("login");
 });
 
+router.get("/forgot-password",(req,res)=>{
+    res.render("forgotPassword")
+});
+
 export {router as webRouter}

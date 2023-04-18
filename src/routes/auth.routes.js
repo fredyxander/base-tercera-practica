@@ -2,6 +2,13 @@ import {Router} from "express";
 import passport from "passport";
 import {AuthController} from "../controllers/auth.controller.js";
 import { UserDTO } from "../daos/dtos/user.dto.js";
+//envio correos
+import { generateEmailToken } from "../utils.js";
+import { sendRecoveryEmail } from "../config/messages/gmail.js";
+//remplazar con repository, controller y factory
+import { UserManagerMongo } from "../daos/managers/userManagerMongo.js";
+import { UserModel } from "../daos/models/user.model.js";
+const userService = new UserManagerMongo(UserModel);
 
 const router = Router();
 
@@ -50,5 +57,21 @@ router.get("/current",(req,res)=>{
         res.send({status:"error", error:"User no loggued"});
     }
 });
+
+//ruta para enviar el correo de recupercion de contrasena
+router.post("/forgot-password",async(req,res)=>{
+    try {
+        const {email} = req.body;
+        const user = await userService.getUserByEmail(email);
+        if(!user){
+            return res.send(`<p>el usaurio no existe, <a href="/signup">Crea una cuenta</a></p>`)
+        }
+        const token = generateEmailToken(user.email,3*60);//timepo de 3min
+        await sendRecoveryEmail(email,token);
+        res.send("<p>Fue enviado el correo con las instrucciones para restablecer la contraseña</p>")
+    } catch (error) {
+        res.send({status:"error", error: error.message});
+    }
+})
 
 export { router as authRouter};
