@@ -105,4 +105,9 @@ router.get("/forgot-password",(req,res)=>{
     res.render("forgotPassword")
 });
 
+router.get("/restart-password",(req,res)=>{
+    const token = req.query.token;
+    res.render("resetPassword", {token});
+});
+
 export {router as webRouter}

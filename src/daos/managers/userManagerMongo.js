@@ -22,6 +22,19 @@ class UserManagerMongo{
             throw new Error(`Error al obtener usuario: ${error.message}`);
         }
     };
+
+    async updateUser(id, user){
+        try {
+            const data = await this.model.findByIdAndUpdate(id, user,{new:true});
+            if(!data){
+                throw new Error(`Error al actualizar: no se encontró el id ${id}`);
+            }
+            const response = JSON.parse(JSON.stringify(data));
+            return response;
+        } catch (error) {
+            throw new Error(`Error al actualizar: no se encontró el id ${id}`);
+        }
+    };
 }
 
 export {UserManagerMongo};
