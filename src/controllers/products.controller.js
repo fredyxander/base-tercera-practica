@@ -1,5 +1,6 @@
 //patrón repository
 import {productService} from "../daos/repository/index.js";
+import {PremiumRole,AdminRole} from "../constants/api.js";
 
 class ProductController{
 
@@ -71,6 +72,7 @@ class ProductController{
             body.status = Boolean(body.status);
             body.price = Number(body.price);
             body.stock = Number(body.stock);
+            body.owner = req.user._id;
             // console.log("body: ", body);
             const productAdded = await productService.addProduct(body);
             res.json({status:"success", result:productAdded, message:"product added"});
@@ -98,9 +100,19 @@ class ProductController{
     static async deleteProduct(req,res){
         try {
             const productId = req.params.pid;
-            //luego eliminamos el producto
-            const productdeleted = await productService.deleteProduct(productId);
-            res.json({status:"success", result:productdeleted.message});
+            //obtenemos el producto, para obtener el id del owner
+            const product = await productService.getProductById(productId);
+            // console.log(product)
+            // console.log(req.user);
+            //validamos si el usuario que está borrando el producto es premium, y si es el owner del producto que está borrando,
+            //también validamos si el usuario que está borrando el producto es un administrador
+            if((req.user.rol === PremiumRole && product.owner == req.user._id) || req.user.rol === AdminRole){
+                // lo dejamos que borre el producto
+                const productdeleted = await productService.deleteProduct(productId);
+                res.json({status:"success", result:productdeleted.message});
+            } else {
+                res.json({status:"error", message:"No tienes permisos para borrar este producto"});
+            }
         } catch (error) {
             res.status(400).json({message:error});
         }
